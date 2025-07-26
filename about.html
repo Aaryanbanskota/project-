@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Aaryan | Creative Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6e45e2;
+            --secondary: #88d3ce;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --accent: #ff6b6b;
+            --terminal: #00ff41;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        
+        .hero-about {
+            text-align: center;
+            padding: 5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(110,69,226,0.1) 0%, rgba(26,26,46,0) 70%);
+            z-index: -1;
+        }
+        
+        .hero-about h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-about p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .avatar-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(110, 69, 226, 0.3);
+        }
+        
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .terminal {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .terminal-dot.red {
+            background: #ff5f56;
+        }
+        
+        .terminal-dot.yellow {
+            background: #ffbd2e;
+        }
+        
+        .terminal-dot.green {
+            background: #27c93f;
+        }
+        
+        .terminal-title {
+            color: rgba(0, 255, 65, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .terminal-content {
+            color: var(--terminal);
+            line-height: 1.5;
+        }
+        
+        .terminal-command {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+        
+        .terminal-prompt {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        
+        .terminal-response {
+            margin-bottom: 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .about-sections {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .about-section {
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .about-section h2 i {
+            color: var(--primary);
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .skill-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-item:hover {
+            background: rgba(110, 69, 226, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .skill-item i {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .timeline {
+            position: relative;
+            margin-top: 2rem;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: var(--primary);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary);
+            border: 2px solid var(--primary);
+        }
+        
+        .timeline-date {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .projects-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .project-mini-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .project-mini-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .project-mini-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .project-mini-card h3 i {
+            color: var(--primary);
+        }
+        
+        .project-mini-card p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+        
+        .project-tag {
+            background: rgba(110, 69, 226, 0.2);
+            color: var(--secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            background: rgba(110, 69, 226, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .contact-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-card h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-card a {
+            color: var(--secondary);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .contact-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 3rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .hero-about h1 {
+                font-size: 2.5rem;
+            }
+            
+            .terminal {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Aaryan</div>
+        <nav class="nav-links">
+            <a href="index.html">Projects</a>
+            <a href="about.html" class="active">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <section class="hero-about">
+            <div class="avatar-container">
+                <img src="https://avatars.githubusercontent.com/u/12345678?v=4" alt="Aaryan" class="avatar">
+            </div>
+            <h1>Aaryan</h1>
+            <p>Creative Developer • Digital Storyteller • Power User</p>
+            
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <div class="terminal-title">user@aaryan:~</div>
+                </div>
+                <div class="terminal-content">
+                    <div class="terminal-command">
+                        <span class="terminal-prompt">$</span> whoami
+                    </div>
+                    <div class="terminal-response">
+                        aaryan_dev --fun --experimental --serious-output
+                    </div>
+                    <div class="terminal-command">
+                        <span class="terminal-prompt">$</span> cat about_me.txt
+                    </div>
+                    <div class="terminal-response">
+                        Passionate developer blending creativity with functionality.<br>
+                        Lover of cinematic UI, gamification, and emotional design.<br>
+                        Builder of tools that make life easier and more enjoyable.<br>
+                        Always thinking beyond the box.
+                    </div>
+                    <div class="terminal-command">
+                        <span class="terminal-prompt">$</span> <span class="blink">_</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="about-sections">
+            <section class="about-section">
+                <h2><i class="fas fa-user-astronaut"></i> Developer Profile</h2>
+                <p>I'm Aaryan, a developer who thrives at the intersection of functionality and creativity. My work combines serious technical execution with playful, engaging experiences.</p>
+                
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Gamification</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-film"></i>
+                        <span>Cinematic UI</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Integration</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-tools"></i>
+                        <span>Power Tools</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-server"></i>
+                        <span>Full-Stack Dev</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-terminal"></i>
+                        <span>Automation</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="about-section">
+                <h2><i class="fas fa-code"></i> Development Stack</h2>
+                <p>My toolkit is a carefully curated collection of technologies that allow me to build across multiple domains:</p>
+                
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <i class="fab fa-html5"></i>
+                        <span>HTML/CSS/JS</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-php"></i>
+                        <span>PHP/MySQL</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-database"></i>
+                        <span>XAMPP</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-terminal"></i>
+                        <span>PowerShell</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Phaser.js</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fab fa-roblox"></i>
+                        <span>Roblox Studio</span>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-paint-brush"></i>
+                        <span>Kenney Assets</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="about-section">
+                <h2><i class="fas fa-project-diagram"></i> Active Projects</h2>
+                <p>A selection of my current works and experiments:</p>
+                
+                <div class="projects-showcase">
+                    <div class="project-mini-card">
+                        <h3><i class="fas fa-rocket"></i> WorkNest</h3>
+                        <p>Productivity dashboard with draggable widgets and Pomodoro timer</p>
+                        <div class="project-tags">
+                            <span class="project-tag">HTML/CSS</span>
+                            <span class="project-tag">JS</span>
+                            <span class="project-tag">Productivity</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-mini-card">
+                        <h3><i class="fas fa-robot"></i> Jarvis AI</h3>
+                        <p>Web-based assistant with voice + visual UI</p>
+                        <div class="project-tags">
+                            <span class="project-tag">AI</span>
+                            <span class="project-tag">Voice Control</span>
+                            <span class="project-tag">Web</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-mini-card">
+                        <h3><i class="fas fa-gamepad"></i> Blossom Builder</h3>
+                        <p>Multiplayer gardening/farming game in Roblox</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Roblox</span>
+                            <span class="project-tag">Lua</span>
+                            <span class="project-tag">Game Dev</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-mini-card">
+                        <h3><i class="fas fa-terminal"></i> CleanMyJunk</h3>
+                        <p>PowerShell GUI for system cleanup</p>
+                        <div class="project-tags">
+                            <span class="project-tag">PowerShell</span>
+                            <span class="project-tag">Automation</span>
+                            <span class="project-tag">GUI</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-mini-card">
+                        <h3><i class="fas fa-film"></i> Driven by Purpose</h3>
+                        <p>Gamified portfolio in Phaser.js</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Phaser.js</span>
+                            <span class="project-tag">Portfolio</span>
+                            <span class="project-tag">Gamification</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-mini-card">
+                        <h3><i class="fab fa-youtube"></i> YekTube</h3>
+                        <p>YouTube clone with responsive layout</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Frontend</span>
+                            <span class="project-tag">Clone</span>
+                            <span class="project-tag">Responsive</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="about-section">
+                <h2><i class="fas fa-road"></i> Development Journey</h2>
+                <p>My path through the digital landscape:</p>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2020 - Started Coding</div>
+                        <div class="timeline-title">First Lines of Code</div>
+                        <p>Began with HTML/CSS, quickly moved to JavaScript and building simple websites.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021 - Backend Exploration</div>
+                        <div class="timeline-title">PHP & MySQL</div>
+                        <p>Discovered XAMPP and started building full-stack applications with user systems.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">2022 - Automation & Tools</div>
+                        <div class="timeline-title">PowerShell Phase</div>
+                        <p>Created numerous automation scripts and GUI tools to streamline workflows.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023 - Game Development</div>
+                        <div class="timeline-title">Roblox & Phaser.js</div>
+                        <p>Expanded into game development, creating interactive experiences and gamified portfolios.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">Present - AI Integration</div>
+                        <div class="timeline-title">Jarvis & Beyond</div>
+                        <p>Focusing on AI-powered tools and assistants that blend functionality with personality.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="contact" class="about-section">
+                <h2><i class="fas fa-paper-plane"></i> Get In Touch</h2>
+                <p>I'm always open to interesting collaborations or just chatting about tech and creative projects:</p>
+                
+                <div class="contact-info">
+                    <div class="contact-card">
+                        <i class="fab fa-github"></i>
+                        <h3>GitHub</h3>
+                        <a href="https://github.com/aaryan-dev" target="_blank">github.com/aaryan-dev</a>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <a href="mailto:ugod942@gmail.com">ugod942@gmail.com</a>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <i class="fab fa-twitter"></i>
+                        <h3>Twitter/X</h3>
+                        <a href="https://twitter.com/aaryan_dev" target="_blank">@aaryan_dev</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">© 2023 Aaryan's Digital Universe. All systems operational.</p>
+    </footer>
+    
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('show');
+        });
+        
+        // Terminal animation
+        const terminalContent = document.querySelector('.terminal-content');
+        const commands = [
+            { cmd: 'npm run interests', response: '> movies, youtube, immersive tech, ui/ux experiments' },
+            { cmd: 'npm run vibe', response: '> fun + experimental but focused on serious output' },
+            { cmd: 'ls projects/', response: 'worknest/ jarvis/ blossom-builder/ yektube/' },
+            { cmd: 'cat goals.txt', response: '1. Build interactive portfolio\n2. Document all tools\n3. Offer live previews\n4. Blend web/game/utility dev' }
+        ];
+        
+        let currentCommand = 0;
+        
+        function typeNextCommand() {
+            if (currentCommand < commands.length) {
+                const commandDiv = document.createElement('div');
+                commandDiv.className = 'terminal-command';
+                commandDiv.innerHTML = `<span class="terminal-prompt">$</span> ${commands[currentCommand].cmd}`;
+                
+                const responseDiv = document.createElement('div');
+                responseDiv.className = 'terminal-response';
+                responseDiv.textContent = commands[currentCommand].response;
+                
+                terminalContent.insertBefore(commandDiv, terminalContent.lastElementChild);
+                terminalContent.insertBefore(responseDiv, terminalContent.lastElementChild);
+                
+                currentCommand++;
+                setTimeout(typeNextCommand, 2000);
+            }
+        }
+        
+        // Start typing commands after a delay
+        setTimeout(typeNextCommand, 3000);
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Close mobile menu if open
+                document.querySelector('.nav-links').classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

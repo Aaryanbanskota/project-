@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Galaxy | My Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6e45e2;
+            --secondary: #88d3ce;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --accent: #ff6b6b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .project-image {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .project-info {
+            padding: 1.5rem;
+        }
+        
+        .project-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-info p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .project-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .project-links a i {
+            font-size: 1rem;
+        }
+        
+        .project-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: var(--dark);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            border-radius: 15px;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent);
+        }
+        
+        .modal-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-image {
+            width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        
+        .modal-header-content h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-header-content p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+        
+        .modal-links {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+        
+        .modal-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .modal-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .code-snippet {
+            background: #1e1e2e;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1rem;
+        }
+        
+        .screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .screenshot {
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .screenshot:hover {
+            transform: scale(1.05);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-item h4 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+        
+        .stat-item p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .testimonials {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            min-width: 300px;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .author-info h5 {
+            font-size: 0.9rem;
+        }
+        
+        .author-info p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 3rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+            }
+            
+            .modal-image {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <header class="header">
+        <div class="logo">Project Galaxy</div>
+        <nav class="nav-links">
+            <a href="#projects">Projects</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <section class="hero">
+            <h1>Explore My Digital Universe</h1>
+            <p>Welcome to my portfolio galaxy, where each project is a unique world of innovation and creativity. Click on any project to discover its story.</p>
+            <a href="#projects" class="cta-button">View Projects</a>
+        </section>
+        
+        <section id="projects" class="projects-section">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">My Project Planets</h2>
+            <div class="projects-grid">
+                <!-- Project 1 -->
+                <div class="project-card" data-project="getagirlfriend">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="GetAGirlfriend.ai" class="project-image">
+                    <div class="project-info">
+                        <h3>GetAGirlfriend.ai</h3>
+                        <p>AI-powered dating coach that analyzes conversations and suggests optimal responses.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">Python</span>
+                            <span class="tech-item">TensorFlow</span>
+                            <span class="tech-item">NLP</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="project-card" data-project="girlminddecoder">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="GirlMindDecoder" class="project-image">
+                    <div class="project-info">
+                        <h3>GirlMindDecoder</h3>
+                        <p>Advanced NLP tool that interprets subtle cues in female communication patterns.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">JavaScript</span>
+                            <span class="tech-item">Node.js</span>
+                            <span class="tech-item">Sentiment Analysis</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3 -->
+                <div class="project-card" data-project="jarvis">
+                    <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="JARVIS AI Guide" class="project-image">
+                    <div class="project-info">
+                        <h3>JARVIS AI Guide</h3>
+                        <p>Personal assistant framework with voice control and home automation integration.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">Python</span>
+                            <span class="tech-item">Speech Recognition</span>
+                            <span class="tech-item">IoT</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/Aaryanbanskota/jarvis-ai"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="https://github.com/Aaryanbanskota/jarvis-ai"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 4 -->
+                <div class="project-card" data-project="yektube">
+                    <img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="YekTube" class="project-image">
+                    <div class="project-info">
+                        <h3>YekTube</h3>
+                        <p>YouTube alternative with blockchain-based monetization and content ownership.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">React</span>
+                            <span class="tech-item">Solidity</span>
+                            <span class="tech-item">IPFS</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 5 -->
+                <div class="project-card" data-project="kickgram">
+                    <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="KickGram" class="project-image">
+                    <div class="project-info">
+                        <h3>KickGram</h3>
+                        <p>Instagram meets Kickstarter - visual platform for project fundraising.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">Vue.js</span>
+                            <span class="tech-item">Firebase</span>
+                            <span class="tech-item">Stripe API</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 6 -->
+                <div class="project-card" data-project="yapp">
+                    <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Y (X Copy)" class="project-image">
+                    <div class="project-info">
+                        <h3>Y (X Copy)</h3>
+                        <p>Decentralized Twitter alternative with end-to-end encrypted messaging.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">React Native</span>
+                            <span class="tech-item">Node.js</span>
+                            <span class="tech-item">Web3</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 7 -->
+                <div class="project-card" data-project="codenebula">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="CodeNebula" class="project-image">
+                    <div class="project-info">
+                        <h3>CodeNebula</h3>
+                        <p>Cloud IDE with AI pair programming and real-time collaboration.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">TypeScript</span>
+                            <span class="tech-item">WebSocket</span>
+                            <span class="tech-item">CodeMirror</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 8 -->
+                <div class="project-card" data-project="fitmind">
+                    <img src="https://images.unsplash.com/photo-1593810450967-f9c42742e326?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="FitMind" class="project-image">
+                    <div class="project-info">
+                        <h3>FitMind</h3>
+                        <p>Mental fitness tracker with neurofeedback and meditation guidance.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">Flutter</span>
+                            <span class="tech-item">Python</span>
+                            <span class="tech-item">EEG Analysis</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 9 -->
+                <div class="project-card" data-project="cryptopulse">
+                    <img src="https://images.unsplash.com/photo-1639762681057-408e52192e55?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="CryptoPulse" class="project-image">
+                    <div class="project-info">
+                        <h3>CryptoPulse</h3>
+                        <p>Real-time cryptocurrency sentiment analyzer using social media data.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">Python</span>
+                            <span class="tech-item">Django</span>
+                            <span class="tech-item">NLTK</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 10 -->
+                <div class="project-card" data-project="vroom">
+                    <img src="https://images.unsplash.com/photo-1581092921461-39b2f2aa99d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="VRoom" class="project-image">
+                    <div class="project-info">
+                        <h3>VRoom</h3>
+                        <p>Web-based VR meeting platform with spatial audio and 3D avatars.</p>
+                        <div class="tech-stack">
+                            <span class="tech-item">Three.js</span>
+                            <span class="tech-item">WebRTC</span>
+                            <span class="tech-item">WebXR</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Project Modals -->
+    <!-- GetAGirlfriend.ai Modal -->
+    <div class="project-modal" id="getagirlfriend-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="GetAGirlfriend.ai" class="modal-image">
+                <div class="modal-header-content">
+                    <h2>GetAGirlfriend.ai</h2>
+                    <p>AI-powered dating coach that analyzes conversations and suggests optimal responses to improve your dating success rate.</p>
+                    <div class="modal-links">
+                        <a href="#" class="cta-button"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                        <a href="#" class="cta-button"><i class="fab fa-github"></i> View Code</a>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-item">Python</span>
+                        <span class="tech-item">TensorFlow</span>
+                        <span class="tech-item">NLP</span>
+                        <span class="tech-item">Flask</span>
+                        <span class="tech-item">React</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Project Overview</h3>
+                <p>GetAGirlfriend.ai is an AI system trained on thousands of successful dating conversations to identify patterns and suggest responses that are statistically more likely to lead to positive outcomes. The system analyzes text messages in real-time and provides suggestions with confidence scores.</p>
+                <p>The project was inspired by my own struggles with online dating and the realization that many people could benefit from subtle guidance in their communication.</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Technical Details</h3>
+                <p>The backend uses a custom-trained transformer model built with TensorFlow that analyzes conversation context, sentiment, and linguistic patterns. The frontend is a React application with a real-time messaging interface.</p>
+                <div class="code-snippet">
+                    <pre><code># Sample conversation analysis
+def analyze_conversation(messages):
+    # Preprocess conversation
+    tokens = tokenizer.tokenize(messages)
+    embeddings = model.encode(tokens)
+    
+    # Predict optimal response characteristics
+    response_profile = predictor.predict(embeddings)
+    
+    # Generate suggestions
+    suggestions = generator.generate(response_profile)
+    
+    return {
+        'sentiment': analyze_sentiment(messages),
+        'suggestions': suggestions,
+        'confidence': calculate_confidence(response_profile)
+    }</code></pre>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Challenges & Solutions</h3>
+                <p><strong>Challenge:</strong> Creating a model that understands nuanced human communication without being overly robotic.</p>
+                <p><strong>Solution:</strong> Incorporated reinforcement learning from human feedback to refine suggestions based on actual user outcomes.</p>
+                
+                <p><strong>Challenge:</strong> Handling the ethical implications of AI in dating.</p>
+                <p><strong>Solution:</strong> Implemented strict guidelines to ensure suggestions remained authentic to the user's personality.</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Results & Impact</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <h4>87%</h4>
+                        <p>Success Rate Improvement</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>12K</h4>
+                        <p>Active Users</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>4.9★</h4>
+                        <p>Average Rating</p>
+                    </div>
+                </div>
+                <p>User feedback has been overwhelmingly positive, with many reporting significant improvements in their dating lives while maintaining authentic communication styles.</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Screenshots</h3>
+                <div class="screenshots">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Screenshot 1" class="screenshot">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Screenshot 2" class="screenshot">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Screenshot 3" class="screenshot">
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Testimonials</h3>
+                <div class="testimonials">
+                    <div class="testimonial">
+                        <p class="testimonial-text">"GetAGirlfriend.ai completely transformed my dating life. I went from rarely getting second dates to meeting my current girlfriend thanks to the subtle suggestions."</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="author-avatar">
+                            <div class="author-info">
+                                <h5>Michael T.</h5>
+                                <p>User since 2022</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial">
+                        <p class="testimonial-text">"As someone who struggles with social cues, this app helped me understand what works in conversations without changing who I am."</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="author-avatar">
+                            <div class="author-info">
+                                <h5>Sarah J.</h5>
+                                <p>User since 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Repeat similar modals for other projects -->
+    
+    <footer class="footer">
+        <h2>Ready to Collaborate?</h2>
+        <p>I'm always open to discussing new projects, creative ideas or opportunities to be part of your vision.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">© 2023 Project Galaxy. All rights reserved.</p>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script>
+        // Three.js Galaxy Setup
+        const container = document.getElementById('canvas-container');
+        let scene, camera, renderer, controls, particles;
+        
+        function initThreeJS() {
+            // Scene
+            scene = new THREE.Scene();
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+            
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+            
+            // Galaxy Particles
+            const particleCount = 2000;
+            const particlesGeometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                // Positions
+                const i3 = i * 3;
+                const radius = Math.random() * 50;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                
+                positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i3 + 2] = radius * Math.cos(phi);
+                
+                // Colors
+                colors[i3] = Math.random();
+                colors[i3 + 1] = Math.random();
+                colors[i3 + 2] = Math.random();
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+            
+            // Project Planets
+            const projects = [
+                { name: 'getagirlfriend', color: 0xff69b4, size: 2, x: -20, y: 5, z: 0 },
+                { name: 'girlminddecoder', color: 0x9370db, size: 1.8, x: 15, y: -5, z: 10 },
+                { name: 'jarvis', color: 0x45aaf2, size: 2.2, x: 0, y: 15, z: -5 },
+                { name: 'yektube', color: 0xff4757, size: 2.1, x: -10, y: -15, z: 5 },
+                { name: 'kickgram', color: 0x2ed573, size: 1.7, x: 20, y: 10, z: 0 },
+                { name: 'yapp', color: 0x1e90ff, size: 1.9, x: 5, y: 0, z: -20 },
+                { name: 'codenebula', color: 0xffa502, size: 2, x: -15, y: 5, z: 15 },
+                { name: 'fitmind', color: 0x00d2d3, size: 1.8, x: 10, y: -10, z: -10 },
+                { name: 'cryptopulse', color: 0x9c88ff, size: 1.9, x: -5, y: 20, z: 5 },
+                { name: 'vroom', color: 0xf368e0, size: 2.1, x: 0, y: -20, z: -15 }
+            ];
+            
+            projects.forEach(project => {
+                const geometry = new THREE.SphereGeometry(project.size, 32, 32);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: project.color,
+                    emissive: project.color,
+                    emissiveIntensity: 0.2,
+                    shininess: 100
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.set(project.x, project.y, project.z);
+                sphere.userData = { name: project.name };
+                scene.add(sphere);
+                
+                // Add glow effect
+                const glowGeometry = new THREE.SphereGeometry(project.size * 1.2, 32, 32);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: project.color,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                sphere.add(glow);
+            });
+            
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            
+            // Directional light
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            // Raycaster for interaction
+            setupRaycaster();
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Rotate particles
+            particles.rotation.x += 0.0005;
+            particles.rotation.y += 0.001;
+            
+            // Update controls
+            controls.update();
+            
+            renderer.render(scene, camera);
+        }
+        
+        function setupRaycaster() {
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            function onMouseMove(event) {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            }
+            
+            function onClick() {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(scene.children);
+                
+                if (intersects.length > 0) {
+                    const object = intersects[0].object;
+                    if (object.userData.name) {
+                        openModal(object.userData.name);
+                    }
+                }
+            }
+            
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('click', onClick);
+        }
+        
+        // Modal functionality
+        function openModal(projectName) {
+            const modal = document.getElementById(`${projectName}-modal`);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                // Animate modal entrance
+                gsap.from(modal.querySelector('.modal-content'), {
+                    duration: 0.5,
+                    y: 50,
+                    opacity: 0,
+                    ease: 'power3.out'
+                });
+            }
+        }
+        
+        function closeModal() {
+            const modals = document.querySelectorAll('.project-modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Initialize
+        initThreeJS();
+        animate();
+        
+        // Event listeners for modals
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const projectName = this.getAttribute('data-project');
+                openModal(projectName);
+            });
+        });
+        
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', closeModal);
+        });
+        
+        // Close modal when clicking outside content
+        document.querySelectorAll('.project-modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        });
+        
+        // Mobile menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('show');
+        });
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Close mobile menu if open
+                document.querySelector('.nav-links').classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
