@@ -78,7 +78,7 @@ cd galaxy-hub
 
 > 🚧 Heads Up!  
 > Parts of Galaxy Hub are still under active construction. Some project pages may not be fully available yet.  
-> I'm working around the clock to ship this with the polish it deserves. Thank you for your patience! 🙏 this is incomplit demo()
+> I'm working around the clock to ship this with the polish it deserves. Thank you for your patience! 🙏 this is incomplite demo(https://aaryanbanskota.github.io/project-/)
 
 ---
 
@@ -90,7 +90,7 @@ cd galaxy-hub
 
 Let’s connect and collaborate!
 
-- 📧 Email: `your@email.com`
+- 📧 Email: `ugod942@email.com`
 - 🌐 Portfolio: _Driven by Purpose – Aaryan’s Digital Journey (coming soon)_
 - 🐙 GitHub: [@Aaryanbanskota](https://github.com/Aaryanbanskota)
 
