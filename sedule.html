@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule a Meeting | Aaryan's Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.min.js"></script>
+    <script src="https://cdn.twilio.com/sdk/js/client/v1.14/twilio.min.js"></script>
+    <style>
+        :root {
+            --primary: #6e45e2;
+            --secondary: #88d3ce;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --accent: #ff6b6b;
+            --available: rgba(136, 211, 206, 0.2);
+            --booked: rgba(255, 107, 107, 0.2);
+            --card-bg: rgba(30, 30, 60, 0.8);
+            --success: #4BB543;
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --input-text: #ffffff;
+            --select-bg: rgba(30, 30, 60, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1, h2, h3, h4 {
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+        }
+        
+        p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--input-text);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: var(--select-bg) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e") no-repeat;
+            background-position: right 0.7em top 50%;
+            background-size: 1.5em;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 69, 226, 0.3);
+        }
+        
+        input[type="datetime-local"], input[type="file"] {
+            position: relative;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .slots-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .slot {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .available {
+            background: var(--available);
+            color: var(--secondary);
+            cursor: pointer;
+        }
+        
+        .available:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .booked {
+            background: var(--booked);
+            color: var(--accent);
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .error {
+            background: rgba(255, 107, 107, 0.2);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .success {
+            background: rgba(75, 181, 67, 0.2);
+            border-left: 4px solid var(--success);
+        }
+        
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        .timezone-info {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+        }
+        
+        .calendar-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+            pointer-events: none;
+        }
+        
+        .date-input-container {
+            position: relative;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .checklist {
+            margin-top: 1.5rem;
+        }
+        
+        .checklist label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .checklist input {
+            width: auto;
+        }
+        
+        .timezone-comparison {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .timezone-box {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .timezone-box h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-container {
+            margin-top: 2rem;
+        }
+        
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(26, 26, 46, 0.9);
+                flex-direction: column;
+                align-items: center;
+                padding: 1rem 0;
+                gap: 1rem;
+            }
+            
+            .nav-links.show {
+                display: flex;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timezone-comparison {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">Aaryan</a>
+        <nav class="nav-links">
+            <a href="index.html">Projects</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <div class="container">
+            <div id="home-view" class="card">
+                <h1>Schedule a Video Call</h1>
+                <p>Available daily from 6:00 AM to 9:00 PM Nepal Time (GMT+5:45)</p>
+                <p id="availability-status">Checking availability...</p>
+                
+                <button onclick="showBookingForm()" class="btn" aria-label="Book a meeting now">
+                    <i class="fas fa-calendar-plus" style="margin-right: 8px;"></i> Book Now
+                </button>
+                
+                <h3 style="margin-top: 2rem;">Today's Available Slots</h3>
+                <div id="today-slots" class="slots-container">
+                    <!-- Filled by JavaScript -->
+                </div>
+                
+                <section id="history" class="history-container">
+                    <h2>Meeting History</h2>
+                    <div id="history-list"></div>
+                    <button id="export-history" class="btn btn-small" style="margin-top: 1rem;">
+                        <i class="fas fa-download" style="margin-right: 8px;"></i> Export History
+                    </button>
+                </section>
+                
+                <section id="features" style="margin-top: 3rem;">
+                    <h2>Premium Features</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h4>Auto-Generated Video Links</h4>
+                            <p>Instant Zoom/Google Meet links created for every meeting</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <h4>SMS & Email Reminders</h4>
+                            <p>Get notifications before your scheduled meeting</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h4>Calendar Integration</h4>
+                            <p>Add meetings directly to your Google/Outlook calendar</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <h4>Secure Payments</h4>
+                            <p>Pay for premium consultations via Stripe</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h4>Meeting History</h4>
+                            <p>View all your past and upcoming meetings</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <h4>File Sharing</h4>
+                            <p>Upload documents to discuss during the meeting</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="booking-form" class="card hidden">
+                <h2>Book Your Meeting</h2>
+                <form id="bookingForm" action="https://formsubmit.co/saviorxavior00@gmail.com" method="POST" enctype="multipart/form-data">
+                    <!-- FormSubmit Configuration -->
+                    <input type="hidden" name="_next" value="https://aaryanbanskota.github.io/thank-you-page-for-all-my-work/">
+                    <input type="hidden" name="_subject" value="New Meeting Scheduled - Aaryan's Portfolio">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_autoresponse" value="Thank you for scheduling a meeting with Aaryan! Your meeting is booked for {{meeting_time_nepal}}.<br><strong>Details:</strong><br>Name: {{name}}<br>Purpose: {{purpose}}<br>Duration: {{duration}} minutes<br>Your Time: {{meeting_time_your_timezone}}<br>Google Meet Link: {{meeting_link}}<br>Add to Calendar: <a href='{{google_calendar_link}}'>Google Calendar</a> | <a href='{{ics_download_link}}'>Apple/Outlook</a><br>Upload additional files: <a href='https://drive.google.com/drive/folders/YOUR_GOOGLE_DRIVE_FOLDER_ID?usp=sharing'>Google Drive</a><br>You will receive SMS/email reminders 24 hours and 1 hour before the meeting.">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="google_calendar_link" id="google_calendar_link">
+                    <input type="hidden" name="ics_download_link" id="ics_download_link">
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required autocomplete="name" placeholder="Your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required autocomplete="email" placeholder="Your email address">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number (for SMS reminders)</label>
+                        <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+1234567890">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Your Role</label>
+                        <input type="text" id="role" name="role" required placeholder="e.g., Developer, Student, Entrepreneur">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">Meeting Purpose</label>
+                        <textarea id="purpose" name="purpose" required placeholder="Briefly describe what you'd like to discuss"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Meeting Duration</label>
+                        <select id="duration" name="duration" required>
+                            <option value="15">Quick Chat (15 min)</option>
+                            <option value="30" selected>Standard Meeting (30 min)</option>
+                            <option value="45">Extended Discussion (45 min)</option>
+                            <option value="60">In-Depth Session (60 min)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Select Date & Time (Nepal Time)</label>
+                        <div class="date-input-container">
+                            <input type="datetime-local" id="date" name="date" required step="1800" autocomplete="off">
+                            <i class="fas fa-calendar-alt calendar-icon"></i>
+                        </div>
+                        <p class="timezone-info">Select a time between 6:00 AM–9:00 AM or 6:00 PM–9:00 PM Nepal Time, in 30-minute intervals.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timezone">Your Timezone</label>
+                        <select id="timezone" name="timezone" required>
+                            <!-- Filled by JavaScript -->
+                        </select>
+                        <p class="timezone-info">We'll show the time in your local timezone</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="buffer">Buffer Time</label>
+                        <select id="buffer" name="buffer">
+                            <option value="5">5 minutes before/after</option>
+                            <option value="10" selected>10 minutes</option>
+                            <option value="15">15 minutes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recurrence">Recurrence</label>
+                        <select id="recurrence" name="recurrence">
+                            <option value="none">One-time meeting</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fileUpload">Upload Files (Optional)</label>
+                        <input type="file" id="fileUpload" name="files[]" multiple accept=".pdf,.jpg,.png" >
+                        <p class="timezone-info">Max 10MB total. Additional files can be shared via Google Drive after booking.</p>
+                    </div>
+
+                    <div id="timezone-comparison" class="timezone-comparison hidden">
+                        <div class="timezone-box">
+                            <h4>Nepal Time</h4>
+                            <p id="nepal-time-display">Not selected</p>
+                        </div>
+                        <div class="timezone-box">
+                            <h4>Your Time</h4>
+                            <p id="user-time-display">Not selected</p>
+                        </div>
+                    </div>
+
+                    <div class="checklist">
+                        <h4>Preparation Checklist</h4>
+                        <label><input type="checkbox" name="checklist[]" value="test_mic"> Test your microphone</label>
+                        <label><input type="checkbox" name="checklist[]" value="test_camera"> Test your camera</label>
+                        <label><input type="checkbox" name="checklist[]" value="close_apps"> Close background apps</label>
+                        <label><input type="checkbox" name="checklist[]" value="good_lighting"> Check lighting conditions</label>
+                    </div>
+
+                    <div id="error-message" class="message error hidden" role="alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="error-text"></span>
+                    </div>
+                    
+                    <div id="success-message" class="message success hidden" role="alert">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="success-text"></span>
+                    </div>
+                    
+                    <div id="loading" class="loading hidden">
+                        <div class="spinner"></div>
+                        <span>Processing your booking...</span>
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn">
+                            <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Confirm Booking
+                        </button>
+                        <button type="button" onclick="showHomeView()" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+
+                <h3 style="margin-top: 2rem;">Already Booked Times</h3>
+                <div id="booked-times" class="slots-container">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p class="copyright">© 2023 Aaryan's Digital Universe. All systems operational.</p>
+    </footer>
+
+    <script>
+        // Configuration
+        const MAX_DAILY_MEETINGS = 10;
+        const NEPAL_OFFSET = '+05:45'; // Nepal Time offset
+        const TWILIO_ACCOUNT_SID = 'YOUR_TWILIO_ACCOUNT_SID';
+        const TWILIO_AUTH_TOKEN = 'YOUR_TWILIO_AUTH_TOKEN';
+        const TWILIO_PHONE_NUMBER = 'YOUR_TWILIO_PHONE_NUMBER';
+        const GOOGLE_DRIVE_FOLDER_ID = 'YOUR_GOOGLE_DRIVE_FOLDER_ID';
+        
+        // DOM Elements
+        const homeView = document.getElementById('home-view');
+        const bookingFormView = document.getElementById('booking-form');
+        const bookingForm = document.getElementById('bookingForm');
+        const todaySlotsContainer = document.getElementById('today-slots');
+        const bookedTimesContainer = document.getElementById('booked-times');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const loadingIndicator = document.getElementById('loading');
+        const availabilityStatus = document.getElementById('availability-status');
+        const timezoneComparison = document.getElementById('timezone-comparison');
+        const nepalTimeDisplay = document.getElementById('nepal-time-display');
+        const userTimeDisplay = document.getElementById('user-time-display');
+        const dateInput = document.getElementById('date');
+        const historyList = document.getElementById('history-list');
+        const exportHistoryBtn = document.getElementById('export-history');
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile menu toggle
+            document.querySelector('.hamburger').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('show');
+            });
+            
+            // Set up form submission
+            bookingForm.addEventListener('submit', handleFormSubmit);
+            
+            // Load initial data
+            fetchTodayBookings();
+            renderHistory();
+            
+            // Add event listener for Escape key to return to home view
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && !bookingFormView.classList.contains('hidden')) {
+                    showHomeView();
+                }
+            });
+            
+            // Remember user details if they've visited before
+            if(localStorage.getItem('userEmail')) {
+                document.getElementById('email').value = localStorage.getItem('userEmail');
+            }
+            
+            // Add input event listener for date validation
+            dateInput.addEventListener('change', updateTimezoneComparison);
+            
+            // Set minimum date to today in Nepal Time
+            const nowNepal = moment().tz('Asia/Kathmandu');
+            dateInput.min = nowNepal.format('YYYY-MM-DDTHH:mm');
+            
+            // Export history
+            exportHistoryBtn.addEventListener('click', exportHistory);
+        });
+        
+        // Generate time slots for display
+        function generateTimeSlots(date = moment().tz('Asia/Kathmandu')) {
+            const slots = [];
+            const startOfDay = date.clone().startOf('day');
+            
+            for (let hour of [6, 7, 8, 18, 19, 20]) {
+                for (let minute of [0, 30]) {
+                    const slotTime = startOfDay.clone().add(hour, 'hours').add(minute, 'minutes');
+                    if (slotTime.isAfter(moment().tz('Asia/Kathmandu'))) {
+                        slots.push(slotTime.format('YYYY-MM-DD HH:mm'));
+                    }
+                }
+            }
+            
+            return slots;
+        }
+        
+        // Initialize timezone selector
+        function initTimezoneSelector() {
+            const timezoneSelect = document.getElementById('timezone');
+            timezoneSelect.innerHTML = '<option value="" disabled selected>Select your timezone</option>';
+            
+            const timezones = moment.tz.names();
+            const userTimezone = moment.tz.guess();
+            
+            timezones.forEach(tz => {
+                const option = document.createElement('option');
+                option.value = tz;
+                const offset = moment.tz(tz).format('Z');
+                const now = moment.tz(tz);
+                const isDST = now.isDST() ? ' (DST)' : '';
+                option.textContent = `${tz.replace(/_/g, ' ')} (GMT${offset})${isDST}`;
+                
+                if (tz === userTimezone) {
+                    option.selected = true;
+                }
+                timezoneSelect.appendChild(option);
+            });
+            
+            timezoneSelect.addEventListener('change', updateTimezoneComparison);
+        }
+        
+        // Update timezone comparison
+        function updateTimezoneComparison() {
+            const dateInputValue = dateInput.value;
+            const timezone = document.getElementById('timezone').value;
+            
+            if (dateInputValue && timezone) {
+                const localDate = moment(dateInputValue);
+                const nepalDate = moment.tz(localDate.format('YYYY-MM-DD HH:mm'), 'Asia/Kathmandu');
+                
+                if (!nepalDate.isValid()) {
+                    showError('Invalid date or time selected');
+                    return;
+                }
+                
+                const userTime = nepalDate.clone().tz(timezone);
+                
+                nepalTimeDisplay.textContent = nepalDate.format('LLLL');
+                userTimeDisplay.textContent = userTime.format('LLLL');
+                
+                const existingNepalTimeField = document.getElementById('meeting_time_nepal');
+                if (!existingNepalTimeField) {
+                    const hiddenTimeField1 = document.createElement('input');
+                    hiddenTimeField1.type = 'hidden';
+                    hiddenTimeField1.id = 'meeting_time_nepal';
+                    hiddenTimeField1.name = 'meeting_time_nepal';
+                    hiddenTimeField1.value = `Meeting Time (Nepal): ${nepalDate.format('LLLL')}`;
+                    bookingForm.appendChild(hiddenTimeField1);
+                } else {
+                    existingNepalTimeField.value = `Meeting Time (Nepal): ${nepalDate.format('LLLL')}`;
+                }
+                
+                const existingUserTimeField = document.getElementById('meeting_time_your_timezone');
+                if (!existingUserTimeField) {
+                    const hiddenTimeField2 = document.createElement('input');
+                    hiddenTimeField2.type = 'hidden';
+                    hiddenTimeField2.id = 'meeting_time_your_timezone';
+                    hiddenTimeField2.name = 'meeting_time_your_timezone';
+                    hiddenTimeField2.value = `Meeting Time (Your Timezone): ${userTime.format('LLLL')}`;
+                    bookingForm.appendChild(hiddenTimeField2);
+                } else {
+                    existingUserTimeField.value = `Meeting Time (Your Timezone): ${userTime.format('LLLL')}`;
+                }
+                
+                timezoneComparison.classList.remove('hidden');
+            } else {
+                timezoneComparison.classList.add('hidden');
+            }
+        }
+        
+        // Show booking form
+        function showBookingForm() {
+            homeView.classList.add('hidden');
+            bookingFormView.classList.remove('hidden');
+            initTimezoneSelector();
+            fetchBookedTimes();
+            
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            bookingForm.reset();
+            
+            document.getElementById('name').focus();
+        }
+        
+        // Show home view
+        function showHomeView() {
+            bookingFormView.classList.add('hidden');
+            homeView.classList.remove('hidden');
+            fetchTodayBookings();
+            renderHistory();
+        }
+        
+        // Show error message
+        function showError(message) {
+            document.getElementById('error-text').textContent = message;
+            errorMessage.classList.remove('hidden');
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            document.getElementById('success-text').textContent = message;
+            successMessage.classList.remove('hidden');
+            successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Fetch today's booked slots
+        async function fetchTodayBookings() {
+            try {
+                todaySlotsContainer.innerHTML = '<p>Loading availability...</p>';
+                
+                const data = {
+                    success: true,
+                    bookings: []
+                };
+                
+                if (data.success) {
+                    displayAvailableSlots(data.bookings);
+                    updateAvailabilityStatus(data.bookings.length);
+                } else {
+                    throw new Error(data.message || 'Failed to fetch bookings');
+                }
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+                todaySlotsContainer.innerHTML = `<p class="error">Error loading availability: ${error.message}</p>`;
+            }
+        }
+        
+        // Display available slots
+        function displayAvailableSlots(bookedSlots) {
+            todaySlotsContainer.innerHTML = '';
+            
+            const availableSlots = generateTimeSlots();
+            const bookedTimes = bookedSlots.map(slot => moment(slot.meetingDate).format('YYYY-MM-DD HH:mm'));
+            
+            if (availableSlots.length === 0) {
+                todaySlotsContainer.innerHTML = '<p>No available slots for today</p>';
+                return;
+            }
+            
+            availableSlots.forEach(slot => {
+                const slotElement = document.createElement('div');
+                
+                if (bookedTimes.includes(slot)) {
+                    slotElement.className = 'slot booked';
+                    slotElement.textContent = moment(slot).format('h:mm A');
+                } else {
+                    slotElement.className = 'slot available';
+                    slotElement.textContent = moment(slot).format('h:mm A');
+                    slotElement.addEventListener('click', () => {
+                        const nepalTime = moment.tz(slot, 'YYYY-MM-DD HH:mm', 'Asia/Kathmandu');
+                        dateInput.value = nepalTime.format('YYYY-MM-DDTHH:mm');
+                        updateTimezoneComparison();
+                    });
+                }
+                
+                todaySlotsContainer.appendChild(slotElement);
+            });
+        }
+        
+        // Update availability status
+        function updateAvailabilityStatus(bookedCount) {
+            if (bookedCount >= MAX_DAILY_MEETINGS) {
+                availabilityStatus.innerHTML = '<i class="fas fa-times-circle" style="color: var(--accent); margin-right: 8px;"></i> All slots booked for today';
+            } else {
+                const remaining = MAX_DAILY_MEETINGS - bookedCount;
+                availabilityStatus.innerHTML = `<i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 8px;"></i> ${remaining} slot${remaining !== 1 ? 's' : ''} remaining today`;
+            }
+        }
+        
+        // Fetch all booked times
+        async function fetchBookedTimes() {
+            try {
+                bookedTimesContainer.innerHTML = '<p>Loading booked times...</p>';
+                
+                const data = {
+                    success: true,
+                    bookings: [
+                        { meetingDate: moment().tz('Asia/Kathmandu').add(1, 'hours').format() },
+                        { meetingDate: moment().tz('Asia/Kathmandu').add(3, 'hours').format() }
+                    ]
+                };
+                
+                if (data.success) {
+                    displayBookedSlots(data.bookings, bookedTimesContainer);
+                } else {
+                    throw new Error(data.message || 'Failed to fetch booked times');
+                }
+            } catch (error) {
+                console.error('Error fetching booked times:', error);
+                bookedTimesContainer.innerHTML = `<p class="error">Error loading booked times: ${error.message}</p>`;
+            }
+        }
+        
+        // Display booked slots
+        function displayBookedSlots(bookings, container) {
+            container.innerHTML = '';
+            
+            if (!bookings || bookings.length === 0) {
+                container.innerHTML = '<p>No bookings yet</p>';
+                return;
+            }
+            
+            bookings.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
+            
+            bookings.forEach(booking => {
+                const slot = document.createElement('div');
+                slot.className = 'slot booked';
+                
+                const date = moment(booking.meetingDate).tz('Asia/Kathmandu');
+                slot.textContent = date.format('MMM D, h:mm A');
+                
+                container.appendChild(slot);
+            });
+        }
+        
+        // Generate Google Meet link
+        function generateMeetingLink() {
+            const randomId = Math.random().toString(36).substring(2, 15);
+            return `https://meet.google.com/${randomId}`;
+        }
+        
+        // Generate Google Calendar link
+        function generateGoogleCalendarLink(formData) {
+            const localDate = moment(formData.date);
+            const nepalDate = moment.tz(localDate.format('YYYY-MM-DD HH:mm'), 'Asia/Kathmandu');
+            const start = nepalDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            const end = nepalDate.clone().add(parseInt(formData.duration), 'minutes').toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(formData.purpose)}&dates=${start}/${end}&details=${encodeURIComponent(`Meeting with ${formData.name} via Google Meet: ${formData.meetingLink}`)}&location=Online`;
+        }
+        
+        // Generate ICS file content
+        function generateICS(formData) {
+            const localDate = moment(formData.date);
+            const nepalDate = moment.tz(localDate.format('YYYY-MM-DD HH:mm'), 'Asia/Kathmandu');
+            const start = nepalDate.format('YYYYMMDDTHHmmss');
+            const end = nepalDate.clone().add(parseInt(formData.duration), 'minutes').format('YYYYMMDDTHHmmss');
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'BEGIN:VEVENT',
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
+                `SUMMARY:${formData.purpose}`,
+                `DESCRIPTION:Meeting with ${formData.name} via Google Meet: ${formData.meetingLink}`,
+                'LOCATION:Online',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\n');
+            return encodeURI(`data:text/calendar;charset=utf8,${icsContent}`);
+        }
+        
+        // Schedule reminders (client-side, for demo)
+        function scheduleReminders(formData) {
+            const localDate = moment(formData.date);
+            const meetingTime = moment.tz(localDate.format('YYYY-MM-DD HH:mm'), 'Asia/Kathmandu');
+            const now = moment.tz('Asia/Kathmandu');
+            const reminders = [
+                { time: meetingTime.clone().subtract(24, 'hours'), type: '24hr' },
+                { time: meetingTime.clone().subtract(1, 'hour'), type: '1hr' }
+            ];
+            
+            reminders.forEach(reminder => {
+                const delay = reminder.time.diff(now);
+                if (delay > 0 && formData.phone) {
+                    setTimeout(() => {
+                        sendSMSReminder(formData, reminder.type);
+                    }, delay);
+                }
+            });
+        }
+        
+        // Send SMS via Twilio
+        function sendSMSReminder(formData, type) {
+            if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+                console.warn('Twilio credentials not set. SMS not sent.');
+                return;
+            }
+            
+            fetch(`https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`),
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    From: TWILIO_PHONE_NUMBER,
+                    To: formData.phone,
+                    Body: `Reminder: Your ${formData.purpose} meeting is ${type === '24hr' ? 'in 24 hours' : 'in 1 hour'} on ${moment.tz(formData.date, 'Asia/Kathmandu').format('MMMM D, YYYY h:mm A')} NPT. Join here: ${formData.meetingLink}`
+                })
+            }).then(response => response.json()).then(data => {
+                console.log('SMS sent:', data);
+            }).catch(error => {
+                console.error('SMS error:', error);
+            });
+        }
+        
+        // Save to meeting history
+        function saveToHistory(formData) {
+            let history = JSON.parse(localStorage.getItem('meetingHistory') || '[]');
+            history.push({
+                ...formData,
+                status: 'Scheduled',
+                timestamp: new Date().toISOString(),
+                meetingLink: formData.meetingLink
+            });
+            localStorage.setItem('meetingHistory', JSON.stringify(history));
+            renderHistory();
+        }
+        
+        // Render meeting history
+        function renderHistory() {
+            let history = JSON.parse(localStorage.getItem('meetingHistory') || '[]');
+            historyList.innerHTML = history.length === 0 ? '<p>No meetings scheduled yet.</p>' : history.map(item => `
+                <div class="history-item">
+                    <p><strong>Date:</strong> ${moment.tz(item.date, 'Asia/Kathmandu').format('MMMM D, YYYY h:mm A')} NPT</p>
+                    <p><strong>Purpose:</strong> ${item.purpose}</p>
+                    <p><strong>Duration:</strong> ${item.duration} minutes</p>
+                    <p><strong>Status:</strong> ${item.status}</p>
+                    <p><strong>Meeting Link:</strong> <a href="${item.meetingLink}" target="_blank">Join Meeting</a></p>
+                </div>
+            `).join('');
+        }
+        
+        // Export meeting history
+        function exportHistory() {
+            const history = localStorage.getItem('meetingHistory') || '[]';
+            const blob = new Blob([history], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'meeting_history.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Validate form data
+        function validateFormData(formData) {
+            const errors = [];
+            
+            if (!formData.name.trim()) {
+                errors.push('Name is required');
+            }
+            
+            if (!formData.email.trim()) {
+                errors.push('Email is required');
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                errors.push('Please enter a valid email address');
+            }
+            
+            if (formData.phone && !/^\+\d{10,15}$/.test(formData.phone)) {
+                errors.push('Phone number must be in international format (e.g., +1234567890)');
+            }
+            
+            if (!formData.role.trim()) {
+                errors.push('Role is required');
+            }
+            
+            if (!formData.purpose.trim()) {
+                errors.push('Meeting purpose is required');
+            }
+            
+            if (!formData.date) {
+                errors.push('Date and time is required');
+            } else {
+                const localDate = moment(formData.date);
+                const nepalDate = moment.tz(localDate.format('YYYY-MM-DD HH:mm'), 'Asia/Kathmandu');
+                
+                if (!nepalDate.isValid()) {
+                    errors.push('Invalid date or time selected');
+                } else {
+                    const now = moment().tz('Asia/Kathmandu');
+                    const duration = parseInt(formData.duration);
+                    const hour = nepalDate.hour();
+                    const minute = nepalDate.minute();
+                    const endTime = nepalDate.clone().add(duration, 'minutes');
+                    
+                    if (nepalDate.isBefore(now)) {
+                        errors.push('Please select a future time slot');
+                    }
+                    
+                    if (
+                        !(hour === 6 || hour === 7 || hour === 8 || 
+                          hour === 18 || hour === 19 || hour === 20) ||
+                        (minute !== 0 && minute !== 30)
+                    ) {
+                        errors.push('Meetings must be scheduled between 6-9 AM or 6-9 PM Nepal Time at 30-minute intervals');
+                    }
+                    
+                    if (endTime.hour() > 21 || (endTime.hour() === 21 && endTime.minute() > 0)) {
+                        errors.push('Meeting duration exceeds available hours (must end by 9 PM Nepal Time)');
+                    }
+                }
+            }
+            
+            if (!formData.timezone) {
+                errors.push('Timezone is required');
+            }
+            
+            const files = document.getElementById('fileUpload').files;
+            let totalSize = 0;
+            for (let file of files) {
+                totalSize += file.size;
+            }
+            if (totalSize > 10 * 1024 * 1024) {
+                errors.push('Total file size must not exceed 10MB');
+            }
+            
+            return errors;
+        }
+        
+        // Handle form submission
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            loadingIndicator.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            
+            const formData = {
+                name: bookingForm.name.value.trim(),
+                email: bookingForm.email.value.trim(),
+                phone: bookingForm.phone.value.trim(),
+                role: bookingForm.role.value.trim(),
+                purpose: bookingForm.purpose.value.trim(),
+                duration: bookingForm.duration.value,
+                date: dateInput.value,
+                timezone: bookingForm.timezone.value,
+                buffer: bookingForm.buffer.value,
+                recurrence: bookingForm.recurrence.value,
+                meetingLink: generateMeetingLink()
+            };
+            
+            const validationErrors = validateFormData(formData);
+            if (validationErrors.length > 0) {
+                loadingIndicator.classList.add('hidden');
+                showError(validationErrors.join('. ') + '.');
+                return;
+            }
+            
+            localStorage.setItem('userEmail', formData.email);
+            
+            const localDate = moment(formData.date);
+            const nepalDate = moment.tz(localDate.format('YYYY-MM-DD HH:mm'), 'Asia/Kathmandu');
+            const meetingTimeNepal = nepalDate.format('LLLL');
+            const meetingTimeUser = nepalDate.clone().tz(formData.timezone).format('LLLL');
+            
+            const existingFields = ['meeting_time_nepal', 'meeting_time_your_timezone', 'meeting_link', 'google_calendar_link', 'ics_download_link'];
+            existingFields.forEach(id => {
+                const field = document.getElementById(id);
+                if (field) field.remove();
+            });
+            
+            const hiddenFields = [
+                { id: 'meeting_time_nepal', name: 'meeting_time_nepal', value: `Meeting Time (Nepal): ${meetingTimeNepal}` },
+                { id: 'meeting_time_your_timezone', name: 'meeting_time_your_timezone', value: `Meeting Time (Your Timezone): ${meetingTimeUser}` },
+                { id: 'meeting_link', name: 'meeting_link', value: `Google Meet Link: ${formData.meetingLink}` },
+                { id: 'google_calendar_link', name: 'google_calendar_link', value: generateGoogleCalendarLink(formData) },
+                { id: 'ics_download_link', name: 'ics_download_link', value: generateICS(formData) }
+            ];
+            
+            hiddenFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.id = field.id;
+                input.name = field.name;
+                input.value = field.value;
+                bookingForm.appendChild(input);
+            });
+            
+            saveToHistory(formData);
+            scheduleReminders(formData);
+            
+            showSuccess('Submitting your booking...');
+            
+            setTimeout(() => {
+                bookingForm.submit();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
