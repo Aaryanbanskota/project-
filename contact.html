@@ -236,6 +236,37 @@
             transform: translateY(-3px);
         }
         
+        .schedule-btn-container {
+            text-align: center;
+            margin: 3rem auto;
+            max-width: 1200px;
+            padding: 0 2rem;
+        }
+        
+        .schedule-btn {
+            background: linear-gradient(90deg, var(--accent), #ff8e8e);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .schedule-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+        
+        .schedule-btn i {
+            margin-left: 8px;
+        }
+        
         .footer {
             text-align: center;
             padding: 3rem 2rem;
@@ -264,6 +295,11 @@
             .contact-container {
                 grid-template-columns: 1fr;
                 padding: 1rem;
+            }
+            
+            .schedule-btn {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
             }
         }
     </style>
@@ -385,6 +421,10 @@
                     <button type="submit" class="submit-btn">Send Message</button>
                 </form>
             </div>
+        </div>
+        
+        <div class="schedule-btn-container">
+            <a href="schedule.html" class="schedule-btn">Click here to schedule online message <i class="fas fa-calendar-alt"></i></a>
         </div>
     </main>
     
